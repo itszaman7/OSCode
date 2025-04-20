@@ -1,29 +1,25 @@
 import java.util.concurrent.*;
 
-public class ThreadPoolExample {
+public class ThreadPoolSquare {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Usage: java ThreadPoolExample <numTasks>");
+            System.out.println("Usage: java ThreadPoolSquare <numTasks>");
             return;
         }
 
         int numTasks = Integer.parseInt(args[0].trim());
 
-        // Create a dynamic thread pool
-        ExecutorService pool = Executors.newCachedThreadPool();
+        ExecutorService pool = Executors.newFixedThreadPool(4); // Use fixed pool (more realistic)
 
-        // Submit tasks to the pool
         for (int i = 0; i < numTasks; i++) {
             pool.execute(new Task(i + 1)); // Pass task ID
         }
 
-        // Shutdown the pool after all tasks complete
         pool.shutdown();
     }
 }
 
-// This class defines the task each thread will execute
 class Task implements Runnable {
     private final int taskId;
 
@@ -32,15 +28,17 @@ class Task implements Runnable {
     }
 
     public void run() {
-        System.out.println("Task " + taskId + " is running in thread: " + Thread.currentThread().getName());
+        int square = taskId * taskId;
 
-        // Simulate work
+        System.out.println("Task " + taskId + " is running on " + Thread.currentThread().getName());
+        System.out.println("Square of " + taskId + " = " + square);
+
         try {
-            Thread.sleep(1000); // 1 second
+            Thread.sleep(500); // Simulate some work
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        System.out.println("Task " + taskId + " completed.");
+        System.out.println("Task " + taskId + " completed.\n");
     }
 }
